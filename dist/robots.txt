@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://your-domain.netlify.app/sitemap.xml
+Sitemap: https://fantastic-cactus-1269d8.netlify.app/sitemap.xml
