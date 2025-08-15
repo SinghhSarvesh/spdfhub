@@ -148,11 +148,40 @@ export default function Home() {
     const tool = pdfTools.find(t => t.id === toolId);
     if (!tool) return;
 
-    // For client-side routing to individual tool pages
+    // Core PDF tools - process directly if files are selected
+    const coreTools = ['merge', 'split', 'compress', 'rotate', 'watermark', 'protect'];
+    
+    if (coreTools.includes(toolId)) {
+      if (selectedFiles.length === 0) {
+        document.getElementById('file-upload')?.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      setCurrentOperation(tool.name);
+      setShowProgressModal(true);
+      
+      // Process based on tool type with appropriate options
+      if (toolId === 'merge') {
+        processFiles('merge', selectedFiles);
+      } else if (toolId === 'split') {
+        // For split, use first 2 pages as default
+        processFiles('split', selectedFiles, { ranges: [{ start: 1, end: 2 }] });
+      } else if (toolId === 'compress') {
+        processFiles('compress', selectedFiles, { level: 'medium' });
+      } else if (toolId === 'rotate') {
+        processFiles('rotate', selectedFiles, { angle: 90 });
+      } else if (toolId === 'watermark') {
+        processFiles('watermark', selectedFiles, { text: 'sPdfHub', opacity: 0.3, fontSize: 50 });
+      } else if (toolId === 'protect') {
+        processFiles('protect', selectedFiles, { password: 'protected123' });
+      }
+      return;
+    }
+
+    // For other tools, show coming soon or redirect to dedicated pages
     const toolRoutes = {
-      'merge': '/tools/merge-pdf',
-      'split': '/tools/split-pdf', 
-      'compress': '/tools/compress-pdf',
+      'jpg-to-pdf': '/tools/jpg-to-pdf',
+      'pdf-to-jpg': '/tools/pdf-to-jpg',
     };
 
     if (toolRoutes[toolId as keyof typeof toolRoutes]) {
@@ -160,15 +189,8 @@ export default function Home() {
       return;
     }
 
-    // For tools without dedicated pages, show file upload
-    if (selectedFiles.length === 0) {
-      document.getElementById('file-upload')?.scrollIntoView({ behavior: 'smooth' });
-      return;
-    }
-
-    setCurrentOperation(tool.name);
-    setShowProgressModal(true);
-    processFiles(toolId, selectedFiles);
+    // Default: show file upload prompt
+    document.getElementById('file-upload')?.scrollIntoView({ behavior: 'smooth' });
   }, [selectedFiles, processFiles]);
 
   const handleCloseProgressModal = useCallback(() => {

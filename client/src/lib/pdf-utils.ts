@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, degrees } from 'pdf-lib';
 
 export interface PDFProcessingOptions {
   compressionLevel?: 'low' | 'medium' | 'high';
@@ -89,7 +89,7 @@ export class PDFProcessor {
         font,
         color: rgb(0.5, 0.5, 0.5),
         opacity,
-        rotate: { type: 'degrees', angle: 45 },
+        rotate: degrees(45),
       });
     });
     
@@ -102,7 +102,7 @@ export class PDFProcessor {
     const pages = pdf.getPages();
     
     pages.forEach((page) => {
-      page.setRotation({ type: 'degrees', angle });
+      page.setRotation(degrees(angle));
     });
     
     return await pdf.save();
